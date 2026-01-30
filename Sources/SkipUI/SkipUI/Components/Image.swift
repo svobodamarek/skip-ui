@@ -515,6 +515,8 @@ public struct Image : View, Renderable, Equatable {
         case "pause.circle": return "Icons.Filled.PauseCircle"
         case "pause.circle.fill": return "Icons.Filled.PauseCircle"
         case "waveform": return "Icons.Filled.GraphicEq"
+        case "pause": return "Icons.Filled.Pause"
+        case "pause.fill": return "Icons.Filled.Pause"
 
         // Communication
         case "message": return "Icons.Filled.Chat"
@@ -529,6 +531,14 @@ public struct Image : View, Renderable, Equatable {
         // Documents
         case "doc": return "Icons.Filled.Description"
         case "doc.fill": return "Icons.Filled.Description"
+        case "doc.text": return "Icons.Filled.Article"
+        case "doc.text.fill": return "Icons.Filled.Article"
+        case "doc.richtext": return "Icons.Filled.Article"
+        case "doc.richtext.fill": return "Icons.Filled.Article"
+        case "doc.on.doc": return "Icons.Filled.FileCopy"
+        case "doc.on.doc.fill": return "Icons.Filled.FileCopy"
+        case "tablecells": return "Icons.Filled.TableChart"
+        case "tablecells.fill": return "Icons.Filled.TableChart"
 
         // Actions
         case "square.and.arrow.down": return "Icons.Filled.Download"
@@ -546,6 +556,10 @@ public struct Image : View, Renderable, Equatable {
         case "speaker.slash.fill": return "Icons.Filled.VolumeOff"
         case "archivebox": return "Icons.Outlined.Archive"
         case "archivebox.fill": return "Icons.Filled.Archive"
+        case "square.grid.2x2": return "Icons.Filled.GridView"
+        case "square.grid.2x2.fill": return "Icons.Filled.GridView"
+        case "wrench.and.screwdriver": return "Icons.Filled.Handyman"
+        case "wrench.and.screwdriver.fill": return "Icons.Filled.Handyman"
 
         default: return nil
         }
@@ -674,6 +688,12 @@ public struct Image : View, Renderable, Equatable {
         case "Icons.Filled.PushPin": return Icons.Filled.PushPin
         case "Icons.Filled.VolumeOff": return Icons.Filled.VolumeOff
         case "Icons.Filled.Archive": return Icons.Filled.Archive
+        case "Icons.Filled.Pause": return Icons.Filled.Pause
+        case "Icons.Filled.Article": return Icons.Filled.Article
+        case "Icons.Filled.FileCopy": return Icons.Filled.FileCopy
+        case "Icons.Filled.TableChart": return Icons.Filled.TableChart
+        case "Icons.Filled.GridView": return Icons.Filled.GridView
+        case "Icons.Filled.Handyman": return Icons.Filled.Handyman
 
         case "Icons.Rounded.AccountBox": return Icons.Rounded.AccountBox
         case "Icons.Rounded.AccountCircle": return Icons.Rounded.AccountCircle
