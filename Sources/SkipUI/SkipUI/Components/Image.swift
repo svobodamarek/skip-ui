@@ -47,9 +47,15 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 #elseif canImport(CoreGraphics)
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGFloat
+#endif
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGRect
+#endif
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGSize
+#endif
 #endif
 
 // SKIP @bridge
@@ -499,6 +505,48 @@ public struct Image : View, Renderable, Equatable {
         case "hand.thumbsup.fill": return "Icons.Filled.ThumbUp" //􀊀
         case "exclamationmark.triangle.fill": return "Icons.Filled.Warning" //􀇿
 
+        // Media
+        case "photo": return "Icons.Filled.Image"
+        case "photo.fill": return "Icons.Filled.Image"
+        case "video": return "Icons.Filled.Videocam"
+        case "video.fill": return "Icons.Filled.Videocam"
+        case "play.circle": return "Icons.Filled.PlayCircle"
+        case "play.circle.fill": return "Icons.Filled.PlayCircle"
+        case "pause.circle": return "Icons.Filled.PauseCircle"
+        case "pause.circle.fill": return "Icons.Filled.PauseCircle"
+        case "waveform": return "Icons.Filled.GraphicEq"
+
+        // Communication
+        case "message": return "Icons.Filled.Chat"
+        case "message.fill": return "Icons.Filled.Chat"
+        case "bubble.left.and.bubble.right": return "Icons.Filled.Forum"
+        case "bubble.left.and.bubble.right.fill": return "Icons.Filled.Forum"
+
+        // People
+        case "person.2": return "Icons.Filled.People"
+        case "person.2.fill": return "Icons.Filled.People"
+
+        // Documents
+        case "doc": return "Icons.Filled.Description"
+        case "doc.fill": return "Icons.Filled.Description"
+
+        // Actions
+        case "square.and.arrow.down": return "Icons.Filled.Download"
+        case "square.and.arrow.down.fill": return "Icons.Filled.Download"
+        case "arrow.down.circle": return "Icons.Filled.ArrowCircleDown"
+        case "arrow.down.circle.fill": return "Icons.Filled.ArrowCircleDown"
+        case "arrow.up.circle": return "Icons.Filled.ArrowCircleUp"
+        case "arrow.up.circle.fill": return "Icons.Filled.ArrowCircleUp"
+        case "qrcode": return "Icons.Filled.QrCode"
+
+        // Status/UI
+        case "pin": return "Icons.Filled.PushPin"
+        case "pin.fill": return "Icons.Filled.PushPin"
+        case "speaker.slash": return "Icons.Filled.VolumeOff"
+        case "speaker.slash.fill": return "Icons.Filled.VolumeOff"
+        case "archivebox": return "Icons.Outlined.Archive"
+        case "archivebox.fill": return "Icons.Filled.Archive"
+
         default: return nil
         }
     }
@@ -557,6 +605,8 @@ public struct Image : View, Renderable, Equatable {
         case "Icons.Outlined.Star": return Icons.Outlined.Star
         case "Icons.Outlined.ThumbUp": return Icons.Outlined.ThumbUp
         case "Icons.Outlined.Warning": return Icons.Outlined.Warning
+        // Custom additions for ioswa-android
+        case "Icons.Outlined.Archive": return Icons.Outlined.Archive
 
         case "Icons.Filled.AccountBox": return Icons.Filled.AccountBox
         case "Icons.Filled.AccountCircle": return Icons.Filled.AccountCircle
@@ -607,6 +657,23 @@ public struct Image : View, Renderable, Equatable {
         case "Icons.Filled.Star": return Icons.Filled.Star
         case "Icons.Filled.ThumbUp": return Icons.Filled.ThumbUp
         case "Icons.Filled.Warning": return Icons.Filled.Warning
+        // Custom additions for ioswa-android
+        case "Icons.Filled.Image": return Icons.Filled.Image
+        case "Icons.Filled.Videocam": return Icons.Filled.Videocam
+        case "Icons.Filled.PlayCircle": return Icons.Filled.PlayCircle
+        case "Icons.Filled.PauseCircle": return Icons.Filled.PauseCircle
+        case "Icons.Filled.GraphicEq": return Icons.Filled.GraphicEq
+        case "Icons.Filled.Chat": return Icons.Filled.Chat
+        case "Icons.Filled.Forum": return Icons.Filled.Forum
+        case "Icons.Filled.People": return Icons.Filled.People
+        case "Icons.Filled.Description": return Icons.Filled.Description
+        case "Icons.Filled.Download": return Icons.Filled.Download
+        case "Icons.Filled.ArrowCircleDown": return Icons.Filled.ArrowCircleDown
+        case "Icons.Filled.ArrowCircleUp": return Icons.Filled.ArrowCircleUp
+        case "Icons.Filled.QrCode": return Icons.Filled.QrCode
+        case "Icons.Filled.PushPin": return Icons.Filled.PushPin
+        case "Icons.Filled.VolumeOff": return Icons.Filled.VolumeOff
+        case "Icons.Filled.Archive": return Icons.Filled.Archive
 
         case "Icons.Rounded.AccountBox": return Icons.Rounded.AccountBox
         case "Icons.Rounded.AccountCircle": return Icons.Rounded.AccountCircle
@@ -1121,10 +1188,16 @@ private struct SymbolSet : Decodable {
 
 #if false
 import class CoreGraphics.CGContext
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGFloat
+#endif
 import class CoreGraphics.CGImage
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGRect
+#endif
+#if canImport(CoreGraphics)
 import struct CoreGraphics.CGSize
+#endif
 import class Foundation.Bundle
 
 
