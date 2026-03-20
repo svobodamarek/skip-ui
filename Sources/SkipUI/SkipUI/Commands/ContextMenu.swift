@@ -11,6 +11,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -30,6 +32,7 @@ class ContextMenuModifier: RenderModifier {
 }
 
 @Composable func RenderContextMenu(content: Renderable, context: ComposeContext, menuItems: ComposeBuilder) {
+    let haptic = LocalHapticFeedback.current
     let isMenuExpanded = remember { mutableStateOf(false) }
     let nestedMenu = remember { mutableStateOf<Menu?>(nil) }
     let coroutineScope = rememberCoroutineScope()
@@ -70,6 +73,7 @@ class ContextMenuModifier: RenderModifier {
                             }
                         } == nil
                         if longPressed {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             isMenuExpanded.value = true
                             // Consume remaining pointer events so the child's tap handler
                             // does not fire when the finger lifts
