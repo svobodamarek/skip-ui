@@ -141,7 +141,7 @@ public struct VStack : View, Renderable {
     }
 
     @Composable private func RenderAnimatedContent(context: ComposeContext, modifier: Modifier, arguments: AnimatedContentArguments, columnAlignment: androidx.compose.ui.Alignment.Horizontal, columnArrangement: Arrangement.Vertical, adaptiveSpacing: Bool, layoutImplementationVersion: Int) {
-        AnimatedContent(modifier: modifier, targetState: arguments.renderables, transitionSpec: {
+        AnimatedContent(modifier: modifier, targetState: arguments.targetState, transitionSpec: {
             EnterTransition.None.togetherWith(ExitTransition.None).using(SizeTransform(clip: false) { initialSize, targetSize in
                  if initialSize.width <= 0 || initialSize.height <= 0 {
                      // When starting at zero size, immediately go to target size so views animate into proper place
@@ -155,7 +155,7 @@ public struct VStack : View, Renderable {
                  }
              })
         }, contentKey: {
-            $0.map(arguments.idMap)
+            $0.ids
         }, content: { state in
             let animation = Animation.current(isAnimating: self.transition.isRunning)
             if animation == nil {
@@ -177,7 +177,7 @@ public struct VStack : View, Renderable {
                     } in: {
                         var lastWasText: Bool? = nil
                         var lastWasSpacer: Bool? = nil
-                        for renderable in state {
+                        for renderable in state.content(for: arguments) {
                             let id = arguments.idMap(renderable)
                             var modifier: Modifier = Modifier
                             if let animation, arguments.newIds.contains(id) || arguments.rememberedNewIds.contains(id) || !arguments.ids.contains(id) {
@@ -203,7 +203,7 @@ public struct VStack : View, Renderable {
                     } in: {
                         var lastWasText: Bool? = nil
                         var lastWasSpacer: Bool? = nil
-                        for renderable in state {
+                        for renderable in state.content(for: arguments) {
                             let id = arguments.idMap(renderable)
                             var modifier: Modifier = Modifier
                             if let animation, arguments.newIds.contains(id) || arguments.rememberedNewIds.contains(id) || !arguments.ids.contains(id) {

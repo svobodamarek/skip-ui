@@ -15,6 +15,10 @@ struct AnimatedContentArguments: Equatable {
     let rememberedNewIds: MutableSet<Any>
     let isBridged: Bool
 
+    var targetState: AnimatedContentState {
+        AnimatedContentState(ids: ids, renderables: renderables)
+    }
+
     static func ==(lhs: AnimatedContentArguments, rhs: AnimatedContentArguments) -> Bool {
         // In bridged mode there are cases where a content renderable (e.g. List/ForEach) will not recompose on its own
         // when the renderable's state changes, so shortcutting the AnimatedContent when the IDs compare equal results in
@@ -25,6 +29,26 @@ struct AnimatedContentArguments: Equatable {
             return lhs === rhs
         }
         return lhs.ids == rhs.ids && lhs.rememberedIds == rhs.rememberedIds && lhs.newIds == rhs.newIds && lhs.rememberedNewIds == rhs.rememberedNewIds
+    }
+}
+
+/// Animation identity must not include newly evaluated view objects. Compose's size map
+/// keeps keys until the keyed content leaves, including updates with the same content key.
+/// Retain the outgoing snapshot, but render the latest values for the current identity.
+struct AnimatedContentState: Hashable {
+    let ids: kotlin.collections.List<Any>
+    let renderables: kotlin.collections.List<Renderable>
+
+    static func ==(lhs: AnimatedContentState, rhs: AnimatedContentState) -> Bool {
+        lhs.ids == rhs.ids
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ids.hashCode())
+    }
+
+    func content(for current: AnimatedContentArguments) -> kotlin.collections.List<Renderable> {
+        ids == current.ids ? current.renderables : renderables
     }
 }
 #endif
