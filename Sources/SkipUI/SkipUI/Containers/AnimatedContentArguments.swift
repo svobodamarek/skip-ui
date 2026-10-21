@@ -35,9 +35,14 @@ struct AnimatedContentArguments: Equatable {
 /// Animation identity must not include newly evaluated view objects. Compose's size map
 /// keeps keys until the keyed content leaves, including updates with the same content key.
 /// Retain the outgoing snapshot, but render the latest values for the current identity.
-struct AnimatedContentState: Hashable {
+final class AnimatedContentState: Hashable {
     let ids: kotlin.collections.List<Any>
-    let renderables: kotlin.collections.List<Renderable>
+    var renderables: kotlin.collections.List<Renderable>
+
+    init(ids: kotlin.collections.List<Any>, renderables: kotlin.collections.List<Renderable>) {
+        self.ids = ids
+        self.renderables = renderables
+    }
 
     static func ==(lhs: AnimatedContentState, rhs: AnimatedContentState) -> Bool {
         lhs.ids == rhs.ids
@@ -48,7 +53,12 @@ struct AnimatedContentState: Hashable {
     }
 
     func content(for current: AnimatedContentArguments) -> kotlin.collections.List<Renderable> {
-        ids == current.ids ? current.renderables : renderables
+        if ids == current.ids {
+            // Refresh the state that Compose actually renders, including a prior
+            // state reused when an interrupted transition returns to this identity.
+            renderables = current.renderables
+        }
+        return renderables
     }
 }
 #endif

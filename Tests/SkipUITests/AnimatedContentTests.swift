@@ -4,6 +4,7 @@
 import SwiftUI
 import XCTest
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 
@@ -34,9 +35,10 @@ final class AnimatedContentTests: SkipUITestCase {
         let replacement = Text("Replacement")
         let old = arguments(listOf<Any>("account"), listOf<Renderable>(outgoing))
         let refreshed = arguments(listOf<Any>("account"), listOf<Renderable>(replacement))
-        XCTAssertTrue(old.targetState.content(for: refreshed)[0] === replacement)
+        let state = old.targetState
+        XCTAssertTrue(state.content(for: refreshed)[0] === replacement)
         let otherAccount = arguments(listOf<Any>("other"), listOf<Renderable>(Text("Other account")))
-        XCTAssertTrue(old.targetState.content(for: otherAccount)[0] === outgoing)
+        XCTAssertTrue(state.content(for: otherAccount)[0] === replacement)
     }
 
     func testAnimationIdentityPreservesOrderAndMembership() {
@@ -46,6 +48,44 @@ final class AnimatedContentTests: SkipUITestCase {
         XCTAssertNotEqual(a, b)
         XCTAssertNotEqual(a, c)
         XCTAssertEqual(a, arguments(listOf<Any>("a", "b"), listOf<Renderable>()).targetState)
+    }
+
+    func testRetiringIdentityKeepsItsLastRenderedSnapshot() {
+        let revision = mutableStateOf(0)
+        let captured = java.util.ArrayList<AnimatedContentState>()
+        let evaluated = java.util.ArrayList<Renderable>()
+        let retained = java.util.HashMap<AnimatedContentState, AnimatedContentState>()
+        composeRule.setContent {
+            let identity = revision.value < 2 || revision.value == 3 ? "first" : "second"
+            let current = arguments(listOf<Any>(identity), listOf<Renderable>(Text("Revision \(revision.value)")))
+            let key = current.targetState
+            let state = retained.get(key) ?? key
+            let displayed = state.content(for: current)
+            SideEffect { retained.putIfAbsent(key, state); captured.add(state); evaluated.add(displayed[0]) }
+        }
+        composeRule.runOnIdle { revision.value = 1 }
+        composeRule.waitForIdle()
+        let previous = captured.last()
+        let latestContent = evaluated.last()
+        composeRule.runOnIdle { revision.value = 2 }
+        composeRule.waitForIdle()
+        let current = captured.last()
+        XCTAssertTrue(captured[0] === previous)
+        XCTAssertFalse(current === previous)
+        let other = arguments(current.ids, current.renderables)
+        XCTAssertTrue(previous.content(for: other)[0] === latestContent)
+        XCTAssertFalse(previous.renderables[0] === current.renderables[0])
+        // An interrupted return can reuse the earlier state for the same key.
+        composeRule.runOnIdle { revision.value = 3 }
+        composeRule.waitForIdle()
+        let returned = captured.last()
+        let latestReturn = evaluated.last()
+        XCTAssertTrue(returned === previous)
+        composeRule.runOnIdle { revision.value = 4 }
+        composeRule.waitForIdle()
+        let finalState = captured.last()
+        XCTAssertTrue(returned.content(for: arguments(finalState.ids, finalState.renderables))[0] === latestReturn)
+        XCTAssertEqual(retained.size, 2)
     }
 
     func testBridgedVStackRefreshesContentWithUnchangedIdentity() { checkRefresh(kind: 0) }
