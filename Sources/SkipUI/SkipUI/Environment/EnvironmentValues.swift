@@ -102,7 +102,12 @@ public final class EnvironmentValues {
         }
         lastSetActions.clear()
         let provided = lastSetValues.map { entry in
-            // SKIP INSERT: val element = entry.key provides entry.value
+            // A returning composable shares its caller's recomposition scope.
+            // Dynamic provider state would subscribe that scope to the value
+            // it replaces on its next evaluation, creating a feedback loop.
+            // Keep the binding scoped and current without a mutable holder.
+            let value = entry.value
+            // SKIP INSERT: val element = entry.key providesComputed { value }
             element
         }.toTypedArray()
         lastSetValues.clear()
