@@ -16,6 +16,8 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -191,7 +193,16 @@ public struct ScrollViewReader : View, Renderable {
     @Composable override func Render(context: ComposeContext) {
         let scrollToID = rememberSaveable(stateSaver: context.stateSaver as! Saver<Preference<ScrollToIDAction>, Any>) { mutableStateOf(Preference<ScrollToIDAction>(key: ScrollToIDPreferenceKey.self)) }
         let scrollToIDCollector = PreferenceCollector<ScrollToIDAction>(key: ScrollToIDPreferenceKey.self, state: scrollToID)
-        let scrollProxy = ScrollViewProxy(scrollToID: scrollToID.value.reduced.action)
+        let reader = remember { ScrollViewReaderState() }
+        let action = scrollToID.value.reduced
+        SideEffect { reader.update(action) }
+        DisposableEffect(reader) {
+            onDispose { reader.retire() }
+        }
+        // A proxy can be captured by an initial task before lazy content has
+        // registered. Dispatch through this reader's live, bounded state rather
+        // than retaining its first (empty) preference action.
+        let scrollProxy = ScrollViewProxy(scrollToID: { id in reader.scrollTo(id) })
         PreferenceValues.shared.collectPreferences([scrollToIDCollector]) {
             content(scrollProxy).Compose(context)
         }
