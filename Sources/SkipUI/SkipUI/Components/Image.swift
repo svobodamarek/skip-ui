@@ -441,6 +441,7 @@ public struct Image : View, Renderable, Equatable {
         case "plus.circle.fill": return "Icons.Outlined.AddCircle" //􀁍
         case "plus": return "Icons.Outlined.Add" //􀅼
         case "arrow.left": return "Icons.Outlined.ArrowBack" //􀄪
+        case "arrow.up": return "Icons.Outlined.ArrowUpward"
         case "arrowtriangle.down.fill": return "Icons.Outlined.ArrowDropDown" //􀄥
         case "arrow.forward": return "Icons.Outlined.ArrowForward" //􀰑
         case "wrench": return "Icons.Outlined.Build" //􀎕
@@ -575,6 +576,7 @@ public struct Image : View, Renderable, Equatable {
         case "Icons.Outlined.AddCircle": return Icons.Outlined.AddCircle
         case "Icons.Outlined.Add": return Icons.Outlined.Add
         case "Icons.Outlined.ArrowBack": return Icons.Outlined.ArrowBack // Compose 1.6 TODO: Icons.AutoMirrored.Outlined.ArrowBack
+        case "Icons.Outlined.ArrowUpward": return Icons.Outlined.ArrowUpward
         case "Icons.Outlined.ArrowDropDown": return Icons.Outlined.ArrowDropDown
         case "Icons.Outlined.ArrowForward": return Icons.Outlined.ArrowForward // Compose 1.6 TODO: Icons.AutoMirrored.Outlined.ArrowForward
         case "Icons.Outlined.Build": return Icons.Outlined.Build
