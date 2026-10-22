@@ -506,7 +506,7 @@ public struct Image : View, Renderable, Equatable {
         case "exclamationmark.triangle.fill": return "Icons.Filled.Warning" //􀇿
 
         // Media
-        case "photo": return "Icons.Filled.Image"
+        case "photo", "photo.on.rectangle", "photo.on.rectangle.angled": return "Icons.Filled.Image"
         case "photo.fill": return "Icons.Filled.Image"
         case "video": return "Icons.Filled.Videocam"
         case "video.fill": return "Icons.Filled.Videocam"
