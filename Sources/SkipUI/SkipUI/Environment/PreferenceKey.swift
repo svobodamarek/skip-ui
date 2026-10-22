@@ -71,11 +71,14 @@ final class PreferenceValues {
     @Composable func contribute(context: ComposeContext, key: Any, value: Any?) {
         // Use a saveable value because the preferences themselves and their node IDs are saved
         let id = rememberSaveable(stateSaver: context.stateSaver as! Saver<Int?, Any>) { mutableStateOf<Int?>(nil) }
-        let collector = rememberUpdatedState(PreferenceValues.shared.collector(key: key))
-        if let collector = collector.value {
+        let currentCollector = PreferenceValues.shared.collector(key: key)
+        // Keep the latest collector for disposal without reading that updated
+        // state in composition, which would invalidate its own contributor.
+        let collector = rememberUpdatedState(currentCollector)
+        if let currentCollector {
             // A side effect is required to ensure that a state change during composition causes a recomposition
             SideEffect {
-                id.value = collector.contribute(value, id: id.value)
+                id.value = currentCollector.contribute(value, id: id.value)
             }
         }
         DisposableEffect(true) {
