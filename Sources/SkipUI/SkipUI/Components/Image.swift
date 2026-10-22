@@ -449,6 +449,7 @@ public struct Image : View, Renderable, Equatable {
         case "checkmark.circle": return "Icons.Outlined.CheckCircle" //􀁢
         case "checkmark": return "Icons.Outlined.Check" //􀆅
         case "xmark": return "Icons.Outlined.Clear" //􀆄
+        case "xmark.circle.fill": return "Icons.Filled.Cancel"
         case "pencil": return "Icons.Outlined.Create" //􀈊
         case "calendar": return "Icons.Outlined.DateRange" //􀉉
         case "trash": return "Icons.Outlined.Delete" //􀈑
@@ -584,6 +585,7 @@ public struct Image : View, Renderable, Equatable {
         case "Icons.Outlined.CheckCircle": return Icons.Outlined.CheckCircle
         case "Icons.Outlined.Check": return Icons.Outlined.Check
         case "Icons.Outlined.Clear": return Icons.Outlined.Clear
+        case "Icons.Filled.Cancel": return Icons.Filled.Cancel
         case "Icons.Outlined.Close": return Icons.Outlined.Close
         case "Icons.Outlined.Create": return Icons.Outlined.Create
         case "Icons.Outlined.DateRange": return Icons.Outlined.DateRange
