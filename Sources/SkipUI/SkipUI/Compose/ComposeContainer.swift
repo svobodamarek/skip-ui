@@ -39,6 +39,47 @@ import androidx.compose.ui.Modifier
     let contentFlexibleWidthMax = remember { mutableStateOf(flexibleWidthMax) }
     let contentFlexibleHeightMax = remember { mutableStateOf(flexibleHeightMax) }
 
+    // Provider values participate in Compose observation. Replacing these
+    // callbacks on every container recomposition invalidates descendants even
+    // when sizing is unchanged. Keep their identity with the remembered cells;
+    // read directional modifiers from the current environment when invoked.
+    let provideFlexibleWidth: @Composable (Float?, Float?, Float?) -> Modifier = remember {
+        { ideal, min, max in
+            var defaultModifier: Modifier = Modifier
+            if max?.isFlexibleExpanding == true {
+                if max == Float.flexibleFill {
+                    SideEffect { contentFlexibleWidthMax.value = Float.flexibleFill }
+                } else if contentFlexibleWidthMax.value != Float.flexibleFill {
+                    // max must be flexibleSpace or flexibleUnknownWithSpace
+                    SideEffect { contentFlexibleWidthMax.value = Float.flexibleUnknownWithSpace }
+                }
+                defaultModifier = Modifier.fillMaxWidth()
+            } else if max != nil && contentFlexibleWidthMax.value == nil {
+                SideEffect { contentFlexibleWidthMax.value = Float.flexibleUnknownNonExpanding }
+            }
+            return EnvironmentValues.shared._flexibleWidthModifier?(ideal, min, max)
+                ?? defaultModifier.applyNonExpandingFlexibleWidth(ideal: ideal, min: min, max: max)
+        }
+    }
+    let provideFlexibleHeight: @Composable (Float?, Float?, Float?) -> Modifier = remember {
+        { ideal, min, max in
+            var defaultModifier: Modifier = Modifier
+            if max?.isFlexibleExpanding == true {
+                if max == Float.flexibleFill {
+                    SideEffect { contentFlexibleHeightMax.value = Float.flexibleFill }
+                } else if contentFlexibleHeightMax.value != Float.flexibleFill {
+                    // max must be flexibleSpace or flexibleUnknownWithSpace
+                    SideEffect { contentFlexibleHeightMax.value = Float.flexibleUnknownWithSpace }
+                }
+                defaultModifier = Modifier.fillMaxHeight()
+            } else if max != nil && contentFlexibleHeightMax.value == nil {
+                SideEffect { contentFlexibleHeightMax.value = Float.flexibleUnknownNonExpanding }
+            }
+            return EnvironmentValues.shared._flexibleHeightModifier?(ideal, min, max)
+                ?? defaultModifier.applyNonExpandingFlexibleHeight(ideal: ideal, min: min, max: max)
+        }
+    }
+
     // Create the correct modifier for the current values and content
     var modifier = modifier
     let inheritedLayoutScrollAxes = EnvironmentValues.shared._layoutScrollAxes
@@ -104,38 +145,8 @@ import androidx.compose.ui.Modifier
 
         // Set the 'flexibleWidth' and 'flexibleHeight' blocks to trigger a side effect to update our container's expansion state, which
         // can cause it to recompose and recalculate its own modifier. We must use `SideEffect` or the recomposition never happens
-        $0.set_flexibleWidth { ideal, min, max in
-            var defaultModifier: Modifier = Modifier
-            if max?.isFlexibleExpanding == true {
-                if max == Float.flexibleFill {
-                    SideEffect { contentFlexibleWidthMax.value = Float.flexibleFill }
-                } else if contentFlexibleWidthMax.value != Float.flexibleFill {
-                    // max must be flexibleSpace or flexibleUnknownWithSpace
-                    SideEffect { contentFlexibleWidthMax.value = Float.flexibleUnknownWithSpace }
-                }
-                defaultModifier = Modifier.fillMaxWidth()
-            } else if max != nil && contentFlexibleWidthMax.value == nil {
-                SideEffect { contentFlexibleWidthMax.value = Float.flexibleUnknownNonExpanding }
-            }
-            return EnvironmentValues.shared._flexibleWidthModifier?(ideal, min, max)
-                ?? defaultModifier.applyNonExpandingFlexibleWidth(ideal: ideal, min: min, max: max)
-        }
-        $0.set_flexibleHeight { ideal, min, max in
-            var defaultModifier: Modifier = Modifier
-            if max?.isFlexibleExpanding == true {
-                if max == Float.flexibleFill {
-                    SideEffect { contentFlexibleHeightMax.value = Float.flexibleFill }
-                } else if contentFlexibleHeightMax.value != Float.flexibleFill {
-                    // max must be flexibleSpace or flexibleUnknownWithSpace
-                    SideEffect { contentFlexibleHeightMax.value = Float.flexibleUnknownWithSpace }
-                }
-                defaultModifier = Modifier.fillMaxHeight()
-            } else if max != nil && contentFlexibleHeightMax.value == nil {
-                SideEffect { contentFlexibleHeightMax.value = Float.flexibleUnknownNonExpanding }
-            }
-            return EnvironmentValues.shared._flexibleHeightModifier?(ideal, min, max)
-                ?? defaultModifier.applyNonExpandingFlexibleHeight(ideal: ideal, min: min, max: max)
-        }
+        $0.set_flexibleWidth(provideFlexibleWidth)
+        $0.set_flexibleHeight(provideFlexibleHeight)
         return ComposeResult.ok
     } in: {
         // Render the container content with the above environment setup
